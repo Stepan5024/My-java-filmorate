@@ -65,7 +65,6 @@ public class UserTests {
     }
 
 
-
     @Test
     public void whenUserIsValid_thenNoViolations() {
         User user = new User();

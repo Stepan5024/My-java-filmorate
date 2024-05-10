@@ -79,6 +79,7 @@ public class UserControllerTests {
         assertTrue(((Map<?, ?>) Objects.requireNonNull(response.getBody())).get("error")
                 .toString().contains("Дата рождения не может быть в будущем."));
     }
+
     @Test
     public void whenUserNotFound_thenResponseNotFound() {
         when(userService.updateUser(anyLong(), any(User.class))).thenReturn(null);
