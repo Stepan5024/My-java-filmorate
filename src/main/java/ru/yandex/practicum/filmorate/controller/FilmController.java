@@ -51,7 +51,7 @@ public class FilmController {
     }
 
     @PutMapping()
-    public ResponseEntity<Object> updateFilm( @Valid @RequestBody Film film,
+    public ResponseEntity<Object> updateFilm(@Valid @RequestBody Film film,
                                              BindingResult bindingResult) {
 
         if (bindingResult.hasErrors()) {
