@@ -50,6 +50,33 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.CREATED).body(createdUser);
     }
 
+    @PutMapping
+    public ResponseEntity<Object> updateUser(@Valid @RequestBody User user, BindingResult bindingResult) {
+        Long id = user.getId();
+        log.info("Updating user with ID: {}", id);
+        if (bindingResult.hasErrors()) {
+            log.warn("Validation updateUser errors occurred: {}", bindingResult.getAllErrors());
+            return ResponseEntity.badRequest().body(Collections.singletonMap("error", "Validation error: "
+                    + bindingResult.getAllErrors()));
+        }
+        try {
+            validateBirthDate(user);
+            setDisplayName(user);
+        } catch (ValidationException e) {
+            log.error("Error updating user: ", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Collections.singletonMap("error",
+                    "Error updating user due to invalid input: " + e.getMessage()));
+        }
+        User updatedUser = userService.updateUser(id, user);
+        if (updatedUser == null) {
+            log.warn("User not found with ID: {}", id);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Collections.singletonMap("error",
+                    "User not found with ID: " + id));
+        }
+        log.info("User updated successfully with ID: {}", id);
+        return ResponseEntity.status(HttpStatus.CREATED).body(updatedUser);
+    }
+
     @PutMapping("/{id}")
     public ResponseEntity<Object> updateUser(@Valid @PathVariable Long id, @Valid @RequestBody User user,
                                              BindingResult bindingResult) {

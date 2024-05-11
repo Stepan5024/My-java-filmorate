@@ -50,6 +50,32 @@ public class FilmController {
         return ResponseEntity.status(HttpStatus.CREATED).body(savedFilm);
     }
 
+    @PutMapping()
+    public ResponseEntity<Object> updateFilm( @Valid @RequestBody Film film,
+                                             BindingResult bindingResult) {
+
+        if (bindingResult.hasErrors()) {
+            log.warn("Validation updateFilm errors occurred: {}", bindingResult.getAllErrors());
+            return ResponseEntity.badRequest().body(Collections.singletonMap("error", "Validation error: "
+                    + bindingResult.getAllErrors()));
+        }
+        try {
+            validateReleaseDate(film.getReleaseDate());
+        } catch (ValidationException e) {
+            log.error("Error creating film: ", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Collections.singletonMap("error",
+                    "Error updating film due to invalid input: " + e.getMessage()));
+        }
+        Long filmId = film.getId();
+        Film updatedFilm = filmService.updateFilm(filmId, film);
+        if (updatedFilm == null) {
+            log.warn("Failed to find film with ID: {} for update", filmId);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Collections.singletonMap("error",
+                    "Film not found with ID: " + filmId));
+        }
+        log.info("Film updated successfully with ID: {}", updatedFilm.getId());
+        return ResponseEntity.status(HttpStatus.OK).body(updatedFilm);
+    }
 
     @PutMapping("/{id}")
     public ResponseEntity<Object> updateFilm(@PathVariable Long id, @Valid @RequestBody Film film,
