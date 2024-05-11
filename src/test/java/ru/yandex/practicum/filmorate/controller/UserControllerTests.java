@@ -97,7 +97,7 @@ public class UserControllerTests {
 
         ResponseEntity<Object> response = userController.updateUser(validUser.getId(), validUser, bindingResult);
 
-        assertEquals(HttpStatus.CREATED, response.getStatusCode());
+        assertEquals(HttpStatus.OK, response.getStatusCode());
         assertNotNull(response.getBody());
         verify(userService).updateUser(validUser.getId(), validUser);
     }
