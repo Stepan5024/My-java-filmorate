@@ -74,7 +74,7 @@ public class UserController {
                     "User not found with ID: " + id));
         }
         log.info("User updated successfully with ID: {}", id);
-        return ResponseEntity.status(HttpStatus.CREATED).body(updatedUser);
+        return ResponseEntity.status(HttpStatus.OK).body(updatedUser);
     }
 
     @PutMapping("/{id}")
@@ -101,7 +101,7 @@ public class UserController {
                     "User not found with ID: " + id));
         }
         log.info("User updated successfully with ID: {}", id);
-        return ResponseEntity.status(HttpStatus.CREATED).body(updatedUser);
+        return ResponseEntity.status(HttpStatus.OK).body(updatedUser);
     }
 
     @GetMapping
