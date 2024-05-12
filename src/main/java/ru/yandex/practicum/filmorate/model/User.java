@@ -3,27 +3,30 @@ package ru.yandex.practicum.filmorate.model;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.experimental.FieldDefaults;
 
 import java.time.LocalDate;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class User {
-    private Long id;
+    Long id;
 
     @NotBlank(message = "Email не может быть пустым")
     @Email(message = "Email should be valid")
-    private String email;
+    String email;
 
     @NotBlank(message = "Login не может быть пустым")
     @Pattern(regexp = "^\\S+$", message = "Login не должен содержать пробелы")
-    private String login;
+    String login;
 
-    private String name;
+    String name;
 
-    private LocalDate birthday;
+    LocalDate birthday;
 }

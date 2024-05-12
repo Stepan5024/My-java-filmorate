@@ -50,7 +50,7 @@ public class FilmController {
         return ResponseEntity.status(HttpStatus.CREATED).body(savedFilm);
     }
 
-    @PutMapping()
+    @PutMapping
     public ResponseEntity<Object> updateFilm(@Valid @RequestBody Film film,
                                              BindingResult bindingResult) {
 
