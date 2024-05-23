@@ -19,9 +19,7 @@ import java.util.Map;
 import java.util.Objects;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+
 import static org.mockito.MockitoAnnotations.openMocks;
 
 @WebMvcTest(FilmController.class)
