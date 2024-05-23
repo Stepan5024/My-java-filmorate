@@ -5,47 +5,40 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.service.user.UserService;
+import ru.yandex.practicum.filmorate.storage.user.UserStorage;
+import ru.yandex.practicum.filmorate.storage.user.impl.InMemoryUserStorage;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @Slf4j
 @Service
 public class UserServiceImpl implements UserService {
-
-    private final Map<Long, User> users = new HashMap<>();
-    private Long currentId = 1L;
+    private final UserStorage userStorage = new InMemoryUserStorage();
 
     @Override
     public User createUser(User user) {
 
-        Long id = currentId++;
-        user.setId(id);
-        users.put(id, user);
-        log.info("Created new user with ID: {} and details: {}", id, user);
-        return user;
+        User newUser = userStorage.addUser(user);
+        log.info("Created new user with ID: {} and details: {}", newUser.getId(), user);
+        return newUser;
     }
 
     @Override
     public User updateUser(Long id, User user) {
 
-        if (users.containsKey(id)) {
-            user.setId(id);
-            users.put(id, user);
-            log.info("Updated user with ID: {} and details: {}", id, user);
-            return user;
-        } else {
+        User newUser = userStorage.updateUser(id, user);
+
+        if (newUser == null) {
             log.warn("Attempted to update non-existing user with ID: {}", id);
             return null;
+        } else {
+            log.info("Updated user with ID: {} and details: {}", id, user);
+            return user;
         }
     }
 
-
     @Override
     public List<User> getAllUsers() {
-        log.debug("Fetching all users");
-        return new ArrayList<>(users.values());
+        return userStorage.getAllUsers();
     }
 }
