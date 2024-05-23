@@ -5,6 +5,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.service.film.impl.FilmServiceImpl;
+import ru.yandex.practicum.filmorate.storage.film.FilmStorage;
+import ru.yandex.practicum.filmorate.storage.film.impl.InMemoryFilmStorage;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -17,7 +19,8 @@ public class FilmServiceImplTest {
 
     @BeforeEach
     public void setup() {
-        filmService = new FilmServiceImpl();
+        FilmStorage filmStorage = new InMemoryFilmStorage();
+        filmService = new FilmServiceImpl(filmStorage);
     }
 
     @Test

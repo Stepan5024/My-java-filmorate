@@ -2,18 +2,27 @@ package ru.yandex.practicum.filmorate.service.user.impl;
 
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.service.user.UserService;
 import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 import ru.yandex.practicum.filmorate.storage.user.impl.InMemoryUserStorage;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
 public class UserServiceImpl implements UserService {
-    private final UserStorage userStorage = new InMemoryUserStorage();
+    private final UserStorage userStorage;
+
+    @Autowired
+    public UserServiceImpl(UserStorage userStorage) {
+        this.userStorage = userStorage;
+    }
 
     @Override
     public User createUser(User user) {
@@ -29,10 +38,8 @@ public class UserServiceImpl implements UserService {
         User newUser = userStorage.updateUser(id, user);
 
         if (newUser == null) {
-            log.warn("Attempted to update non-existing user with ID: {}", id);
             return null;
         } else {
-            log.info("Updated user with ID: {} and details: {}", id, user);
             return user;
         }
     }
@@ -40,5 +47,34 @@ public class UserServiceImpl implements UserService {
     @Override
     public List<User> getAllUsers() {
         return userStorage.getAllUsers();
+    }
+
+    public void addFriend(Long userId, Long friendId) {
+        User user = userStorage.getUserById(userId).orElseThrow();
+        User friend = userStorage.getUserById(friendId).orElseThrow();
+        user.getFriends().add(friendId);
+        friend.getFriends().add(userId);
+        userStorage.updateUser(user.getId(), user);
+        userStorage.updateUser(friend.getId(), friend);
+    }
+
+    public void removeFriend(Long userId, Long friendId) {
+        User user = userStorage.getUserById(userId).orElseThrow();
+        User friend = userStorage.getUserById(friendId).orElseThrow();
+        user.getFriends().remove(friendId);
+        friend.getFriends().remove(userId);
+        userStorage.updateUser(user.getId(), user);
+        userStorage.updateUser(friend.getId(), friend);
+    }
+
+    public List<User> getMutualFriends(Long userId, Long friendId) {
+        User user = userStorage.getUserById(userId).orElseThrow();
+        User friend = userStorage.getUserById(friendId).orElseThrow();
+        Set<Long> mutualFriendIds = new HashSet<>(user.getFriends());
+
+        mutualFriendIds.retainAll(friend.getFriends());
+        return mutualFriendIds.stream()
+                .map(id -> userStorage.getUserById(id).orElse(null))
+                .collect(Collectors.toList());
     }
 }
