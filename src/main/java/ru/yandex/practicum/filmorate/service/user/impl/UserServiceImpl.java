@@ -49,15 +49,9 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User getUserById(Long userId) {
-        return userStorage.getUserById(userId).orElseThrow();
-    }
-
-    @Override
     public Set<User> getAllFriends(Long id) {
 
-        User user = userStorage.getUserById(id)
-                .orElseThrow(() -> new NoSuchElementException("User not found with ID: " + id));
+        User user = getUserById(id, "Friend");
 
         Set<Long> friendIds = user.getFriends();
 
@@ -70,8 +64,8 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void addFriend(Long userId, Long friendId) {
-        User user = userStorage.getUserById(userId).orElseThrow();
-        User friend = userStorage.getUserById(friendId).orElseThrow();
+        User user = getUserById(userId, "User");
+        User friend = getUserById(friendId, "Friend");
         user.getFriends().add(friendId);
         friend.getFriends().add(userId);
         userStorage.updateUser(user.getId(), user);
@@ -80,8 +74,8 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void removeFriend(Long userId, Long friendId) {
-        User user = userStorage.getUserById(userId).orElseThrow();
-        User friend = userStorage.getUserById(friendId).orElseThrow();
+        User user = getUserById(userId, "User");
+        User friend = getUserById(friendId, "Friend");
         user.getFriends().remove(friendId);
         friend.getFriends().remove(userId);
         userStorage.updateUser(user.getId(), user);
@@ -90,13 +84,25 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<User> getCommonFriends(Long userId, Long friendId) {
-        User user = userStorage.getUserById(userId).orElseThrow();
-        User friend = userStorage.getUserById(friendId).orElseThrow();
+        User user = getUserById(userId, "User");
+        User friend = getUserById(friendId, "Friend");
         Set<Long> mutualFriendIds = new HashSet<>(user.getFriends());
 
         mutualFriendIds.retainAll(friend.getFriends());
         return mutualFriendIds.stream()
                 .map(id -> userStorage.getUserById(id).orElse(null))
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public User getUserById(Long userId, String userType) {
+        return userStorage.getUserById(userId)
+                .orElseThrow(() -> new NoSuchElementException(userType + " not found with ID: " + userId));
+    }
+
+    @Override
+    public User getUserById(Long userId) {
+        return userStorage.getUserById(userId)
+                .orElseThrow(() -> new NoSuchElementException("User not found with ID: " + userId));
     }
 }

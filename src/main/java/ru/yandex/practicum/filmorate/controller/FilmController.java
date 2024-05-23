@@ -15,6 +15,7 @@ import ru.yandex.practicum.filmorate.service.film.FilmService;
 import java.time.LocalDate;
 import java.util.Collections;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 @Slf4j
 @RestController
@@ -31,6 +32,7 @@ public class FilmController {
 
     @PostMapping
     public ResponseEntity<Object> addFilm(@Valid @RequestBody Film film, BindingResult bindingResult) {
+        // создать новый фильм
         log.info("Attempting to add a new film with title: {}", film.getName());
 
         if (bindingResult.hasErrors()) {
@@ -38,13 +40,7 @@ public class FilmController {
             return ResponseEntity.badRequest().body(Collections.singletonMap("error", "Validation error: " + bindingResult.getAllErrors()));
         }
 
-        try {
-            validateReleaseDate(film.getReleaseDate());
-        } catch (ValidationException e) {
-            log.error("Error creating film: ", e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Collections.singletonMap("error",
-                    "Error creating film due to invalid input: " + e.getMessage()));
-        }
+        validateReleaseDate(film.getReleaseDate());
         Film savedFilm = filmService.addFilm(film);
         log.info("Film added successfully with ID: {}", savedFilm.getId());
         return ResponseEntity.status(HttpStatus.CREATED).body(savedFilm);
@@ -53,25 +49,20 @@ public class FilmController {
     @PutMapping
     public ResponseEntity<Object> updateFilm(@Valid @RequestBody Film film,
                                              BindingResult bindingResult) {
-
+        // обновить фильм по Film
         if (bindingResult.hasErrors()) {
             log.warn("Validation updateFilm errors occurred: {}", bindingResult.getAllErrors());
             return ResponseEntity.badRequest().body(Collections.singletonMap("error", "Validation error: "
                     + bindingResult.getAllErrors()));
         }
-        try {
-            validateReleaseDate(film.getReleaseDate());
-        } catch (ValidationException e) {
-            log.error("Error creating film: ", e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Collections.singletonMap("error",
-                    "Error updating film due to invalid input: " + e.getMessage()));
-        }
+
+        validateReleaseDate(film.getReleaseDate());
+
         Long filmId = film.getId();
         Film updatedFilm = filmService.updateFilm(filmId, film);
         if (updatedFilm == null) {
             log.warn("Failed to find film with ID: {} for update", filmId);
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Collections.singletonMap("error",
-                    "Film not found with ID: " + filmId));
+            throw new NoSuchElementException("Failed to find film with ID: " + filmId);
         }
         log.info("Film updated successfully with ID: {}", updatedFilm.getId());
         return ResponseEntity.status(HttpStatus.OK).body(updatedFilm);
@@ -80,24 +71,18 @@ public class FilmController {
     @PutMapping("/{id}")
     public ResponseEntity<Object> updateFilm(@PathVariable Long id, @Valid @RequestBody Film film,
                                              BindingResult bindingResult) {
+        // обновить фильм по id
         log.info("Attempting to update film with ID: {}", id);
         if (bindingResult.hasErrors()) {
             log.warn("Validation updateFilm errors occurred: {}", bindingResult.getAllErrors());
             return ResponseEntity.badRequest().body(Collections.singletonMap("error", "Validation error: "
                     + bindingResult.getAllErrors()));
         }
-        try {
-            validateReleaseDate(film.getReleaseDate());
-        } catch (ValidationException e) {
-            log.error("Error creating film: ", e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Collections.singletonMap("error",
-                    "Error updating film due to invalid input: " + e.getMessage()));
-        }
+        validateReleaseDate(film.getReleaseDate());
         Film updatedFilm = filmService.updateFilm(id, film);
         if (updatedFilm == null) {
             log.warn("Failed to find film with ID: {} for update", id);
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Collections.singletonMap("error",
-                    "Film not found with ID: " + id));
+            throw new NoSuchElementException("Film not found with ID: " + id);
         }
         log.info("Film updated successfully with ID: {}", updatedFilm.getId());
         return ResponseEntity.status(HttpStatus.OK).body(updatedFilm);
@@ -105,6 +90,7 @@ public class FilmController {
 
     @GetMapping
     public ResponseEntity<List<Film>> getAllFilms() {
+        // получить все фильмы
         log.debug("Fetching all films.");
         List<Film> films = filmService.getAllFilms();
         return ResponseEntity.status(HttpStatus.OK).body(films);
@@ -113,8 +99,47 @@ public class FilmController {
     private void validateReleaseDate(LocalDate releaseDate) {
         LocalDate earliestReleaseFilmDate = LocalDate.of(1895, 12, 28);
         if (releaseDate.isBefore(earliestReleaseFilmDate)) {
-            log.error("Release date validation failed for date: {}. It must be on or after 28th December 1895.", releaseDate);
+            log.error("Release date validation failed for date: {}. It must be on or after 28th December 1895.",
+                    releaseDate);
             throw new ValidationException("Дата релиза должна быть не раньше 28 декабря 1895 года.");
         }
     }
+
+    @PutMapping("/{id}/like/{userId}")
+    public ResponseEntity<Void> addLike(@PathVariable Long id, @PathVariable Long userId) throws Exception {
+        // пользователь ставит лайк фильму
+        try {
+            filmService.addLike(id, userId);
+            return ResponseEntity.ok().build();
+        } catch (NoSuchElementException e) {
+            log.error("Failed to add like: {}", e.getMessage());
+            throw new NoSuchElementException("Failed to add like: " + e.getMessage(), e);
+        }
+    }
+
+    @DeleteMapping("/{id}/like/{userId}")
+    public ResponseEntity<Void> removeLike(@PathVariable Long id, @PathVariable Long userId) {
+        // пользователь удаляет лайк
+        try {
+            filmService.removeLike(id, userId);
+            return ResponseEntity.ok().build();
+        } catch (NoSuchElementException e) {
+            log.error("Failed to remove like: {}", e.getMessage());
+            throw new NoSuchElementException("Failed to remove like: "+ e.getMessage(), e);
+        }
+    }
+
+    @GetMapping("/popular")
+    public ResponseEntity<List<Film>> getTopFilms(@RequestParam(defaultValue = "10") int count) {
+        // возвращает список из первых count фильмов по количеству лайков. Если значение параметра count не задано,
+        // верните первые 10
+        try {
+            List<Film> films = filmService.getTopFilms(count);
+            return ResponseEntity.ok(films);
+        } catch (Exception e) {
+            log.error("Error fetching top films: ", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
 }

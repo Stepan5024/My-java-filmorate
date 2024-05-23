@@ -12,6 +12,8 @@ public interface UserService {
 
     List<User> getAllUsers();
 
+    User getUserById(Long userId, String userType);
+
     User getUserById(Long userId);
 
     Set<User> getAllFriends(Long id);
