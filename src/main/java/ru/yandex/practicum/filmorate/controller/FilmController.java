@@ -29,7 +29,6 @@ public class FilmController {
         log.debug("FilmController initialized with FilmService.");
     }
 
-
     @PostMapping
     public ResponseEntity<Object> addFilm(@Valid @RequestBody Film film, BindingResult bindingResult) {
         // создать новый фильм
@@ -125,7 +124,7 @@ public class FilmController {
             return ResponseEntity.ok().build();
         } catch (NoSuchElementException e) {
             log.error("Failed to remove like: {}", e.getMessage());
-            throw new NoSuchElementException("Failed to remove like: "+ e.getMessage(), e);
+            throw new NoSuchElementException("Failed to remove like: " + e.getMessage(), e);
         }
     }
 

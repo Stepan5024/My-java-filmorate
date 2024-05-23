@@ -14,6 +14,7 @@ import ru.yandex.practicum.filmorate.service.user.UserService;
 import java.time.LocalDate;
 import java.util.Collections;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Set;
 
 @Slf4j
@@ -42,6 +43,7 @@ public class UserController {
             setDisplayName(user);
         } catch (ValidationException e) {
             log.error("Error creating user: ", e);
+
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Collections.singletonMap("error",
                     "Error creating user due to invalid input: " + e.getMessage()));
         }
@@ -60,19 +62,14 @@ public class UserController {
             return ResponseEntity.badRequest().body(Collections.singletonMap("error", "Validation error: "
                     + bindingResult.getAllErrors()));
         }
-        try {
-            validateBirthDate(user);
-            setDisplayName(user);
-        } catch (ValidationException e) {
-            log.error("Error updating user: ", e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Collections.singletonMap("error",
-                    "Error updating user due to invalid input: " + e.getMessage()));
-        }
+
+        validateBirthDate(user);
+        setDisplayName(user);
+
         User updatedUser = userService.updateUser(id, user);
         if (updatedUser == null) {
             log.warn("User not found with ID: {}", id);
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Collections.singletonMap("error",
-                    "User not found with ID: " + id));
+            throw new NoSuchElementException("User not found with ID: " + id);
         }
         log.info("User updated successfully with ID: {}", id);
         return ResponseEntity.status(HttpStatus.OK).body(updatedUser);
@@ -87,19 +84,14 @@ public class UserController {
             return ResponseEntity.badRequest().body(Collections.singletonMap("error", "Validation error: "
                     + bindingResult.getAllErrors()));
         }
-        try {
-            validateBirthDate(user);
-            setDisplayName(user);
-        } catch (ValidationException e) {
-            log.error("Error creating user: ", e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Collections.singletonMap("error",
-                    "Error updating user due to invalid input: " + e.getMessage()));
-        }
+
+        validateBirthDate(user);
+        setDisplayName(user);
+
         User updatedUser = userService.updateUser(id, user);
         if (updatedUser == null) {
             log.warn("User not found with ID: {}", id);
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Collections.singletonMap("error",
-                    "User not found with ID: " + id));
+            throw new NoSuchElementException("User not found with ID: " + id);
         }
         log.info("User updated successfully with ID: {}", id);
         return ResponseEntity.status(HttpStatus.OK).body(updatedUser);
@@ -115,13 +107,12 @@ public class UserController {
     private static void validateBirthDate(User user) {
         LocalDate now = LocalDate.now();
         if (user.getBirthday().isAfter(now)) {
-            throw new ValidationException("Дата рождения не может быть в будущем.");
+            throw new IllegalArgumentException("Дата рождения не может быть в будущем.");
         }
     }
 
     private void setDisplayName(User user) {
         if (user.getName() == null || user.getName().isEmpty()) {
-            log.error("Attempted to create/update user with a birthday in the future: {}", user.getBirthday());
             user.setName(user.getLogin());
         }
     }
@@ -133,7 +124,7 @@ public class UserController {
         if (user != null) {
             return ResponseEntity.ok(user);
         } else {
-            return ResponseEntity.notFound().build();
+            throw new NoSuchElementException("User not found with ID: " + id);
         }
 
     }
