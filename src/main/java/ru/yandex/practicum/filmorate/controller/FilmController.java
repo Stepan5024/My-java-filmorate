@@ -21,6 +21,7 @@ import java.util.NoSuchElementException;
 @RestController
 @RequestMapping("/films")
 public class FilmController {
+    private static final String LIKE_PATH = "/{id}/like/{userId}";
     private final FilmService filmService;
 
     @Autowired
@@ -104,7 +105,7 @@ public class FilmController {
         }
     }
 
-    @PutMapping("/{id}/like/{userId}")
+    @PutMapping(LIKE_PATH)
     public ResponseEntity<Void> addLike(@PathVariable Long id, @PathVariable Long userId) throws Exception {
         // пользователь ставит лайк фильму
         try {
@@ -116,7 +117,7 @@ public class FilmController {
         }
     }
 
-    @DeleteMapping("/{id}/like/{userId}")
+    @DeleteMapping(LIKE_PATH)
     public ResponseEntity<Void> removeLike(@PathVariable Long id, @PathVariable Long userId) {
         // пользователь удаляет лайк
         try {

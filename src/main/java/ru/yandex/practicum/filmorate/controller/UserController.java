@@ -21,7 +21,7 @@ import java.util.Set;
 @RestController
 @RequestMapping("/users")
 public class UserController {
-
+    private static final String FRIENDS_PATH = "/{id}/friends/{friendId}";
     private final UserService userService;
 
     @Autowired
@@ -129,14 +129,14 @@ public class UserController {
 
     }
 
-    @PutMapping("/{id}/friends/{friendId}")
+    @PutMapping(FRIENDS_PATH)
     public ResponseEntity<Void> addFriend(@PathVariable Long id, @PathVariable Long friendId) {
         // добавление в друзья
         userService.addFriend(id, friendId);
         return ResponseEntity.ok().build();
     }
 
-    @DeleteMapping("/{id}/friends/{friendId}")
+    @DeleteMapping(FRIENDS_PATH)
     public ResponseEntity<Void> removeFriend(@PathVariable Long id, @PathVariable Long friendId) {
         // удаление из друзей
         userService.removeFriend(id, friendId);
