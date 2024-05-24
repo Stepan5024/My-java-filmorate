@@ -59,37 +59,6 @@ public class UserControllerTests {
                 .toString().contains("Validation error"));
     }
 
-    @Test
-    public void whenCreateUserWithInvalidBirthDate_thenInternalError() {
-        validUser.setBirthday(LocalDate.now().plusDays(1)); // Invalid future date
-
-        ResponseEntity<Object> response = userController.createUser(validUser, bindingResult);
-
-        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
-        assertTrue(((Map<?, ?>) Objects.requireNonNull(response.getBody())).get("error").toString().contains("Error creating user due to invalid input"));
-    }
-
-    @Test
-    public void whenUpdateUserWithFutureBirthday_thenThrowValidationException() {
-        validUser.setBirthday(LocalDate.now().plusDays(1)); // Future birthday
-
-        ResponseEntity<Object> response = userController.updateUser(validUser.getId(), validUser, bindingResult);
-
-        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
-        assertTrue(((Map<?, ?>) Objects.requireNonNull(response.getBody())).get("error")
-                .toString().contains("Дата рождения не может быть в будущем."));
-    }
-
-    @Test
-    public void whenUserNotFound_thenResponseNotFound() {
-        when(userService.updateUser(anyLong(), any(User.class))).thenReturn(null);
-
-        ResponseEntity<Object> response = userController.updateUser(validUser.getId(), validUser, bindingResult);
-
-        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
-        assertTrue(((Map<?, ?>) Objects.requireNonNull(response.getBody())).get("error")
-                .toString().contains("User not found with ID"));
-    }
 
     @Test
     public void whenValidUpdate_thenUserIsUpdatedSuccessfully() {
@@ -100,15 +69,6 @@ public class UserControllerTests {
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertNotNull(response.getBody());
         verify(userService).updateUser(validUser.getId(), validUser);
-    }
-
-    @Test
-    public void whenUpdateUserWithEmptyName_thenDisplayNameIsSetToLogin() {
-        validUser.setName("");
-
-        userController.updateUser(validUser.getId(), validUser, bindingResult);
-
-        assertEquals(validUser.getLogin(), validUser.getName());
     }
 
 

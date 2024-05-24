@@ -4,6 +4,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.service.user.impl.UserServiceImpl;
+import ru.yandex.practicum.filmorate.storage.user.UserStorage;
+import ru.yandex.practicum.filmorate.storage.user.impl.InMemoryUserStorage;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -16,7 +18,8 @@ public class UserServiceImplTest {
 
     @BeforeEach
     public void setup() {
-        userService = new UserServiceImpl();
+        UserStorage userStorage = new InMemoryUserStorage();
+        userService = new UserServiceImpl(userStorage);
     }
 
     @Test

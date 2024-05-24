@@ -11,6 +11,8 @@ import lombok.NoArgsConstructor;
 import lombok.experimental.FieldDefaults;
 
 import java.time.LocalDate;
+import java.util.HashSet;
+import java.util.Set;
 
 @Data
 @AllArgsConstructor
@@ -32,4 +34,16 @@ public class Film {
 
     @Positive(message = "Duration must be greater than zero")
     int duration;
+
+    Set<Long> likes = new HashSet<>();
+
+
+    public Film(Long id, String name, String description, LocalDate releaseDate, int duration) {
+        this.id = id;
+        this.name = name;
+        this.description = description;
+        this.releaseDate = releaseDate;
+        this.duration = duration;
+        this.likes = new HashSet<>();
+    }
 }
