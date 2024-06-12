@@ -91,6 +91,12 @@ mvn spring-boot:run
 - `GET /users`: Получить всех пользователей.
 
 
+# ER диаграмма базы данных (БД)
+Ссылка https://app.quickdatabasediagrams.com/#/d/Qndfao
+
+![Описание ER DB](src/main/resources/images/ER_DataBase.png)
+## Обзор
+
 ## Об авторе
 
 **Степан Бокарев**
