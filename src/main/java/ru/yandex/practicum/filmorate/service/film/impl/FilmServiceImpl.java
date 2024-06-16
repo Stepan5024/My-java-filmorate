@@ -6,9 +6,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.repository.film.FilmRepository;
+import ru.yandex.practicum.filmorate.repository.film.impl.FilmDbStorage;
+import ru.yandex.practicum.filmorate.repository.film.impl.InMemoryFilmStorage;
 import ru.yandex.practicum.filmorate.service.film.FilmService;
 import ru.yandex.practicum.filmorate.service.user.UserService;
-import ru.yandex.practicum.filmorate.storage.film.FilmStorage;
+
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -17,11 +20,11 @@ import java.util.stream.Collectors;
 @Service
 public class FilmServiceImpl implements FilmService {
 
-    private final FilmStorage filmStorage;
+    private final FilmRepository filmStorage;
     private final UserService userService;
 
     @Autowired
-    public FilmServiceImpl(FilmStorage filmStorage, UserService userService) {
+    public FilmServiceImpl(InMemoryFilmStorage filmStorage, UserService userService) {
         this.filmStorage = filmStorage;
         this.userService = userService;
     }

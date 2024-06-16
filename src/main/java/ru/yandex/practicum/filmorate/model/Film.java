@@ -1,5 +1,6 @@
 package ru.yandex.practicum.filmorate.model;
 
+import io.micrometer.common.lang.Nullable;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
@@ -21,7 +22,6 @@ import java.util.Set;
 public class Film {
     Long id;
 
-
     @NotBlank(message = "Name cannot be blank")
     String name;
 
@@ -37,13 +37,14 @@ public class Film {
 
     Set<Long> likes = new HashSet<>();
 
+    MPARating mpaRating;
 
-    public Film(Long id, String name, String description, LocalDate releaseDate, int duration) {
-        this.id = id;
+    private Set<Long> genreIds = new HashSet<>();
+
+    public Film(String name, String description, LocalDate releaseDate, int duration) {
         this.name = name;
         this.description = description;
         this.releaseDate = releaseDate;
         this.duration = duration;
-        this.likes = new HashSet<>();
     }
 }

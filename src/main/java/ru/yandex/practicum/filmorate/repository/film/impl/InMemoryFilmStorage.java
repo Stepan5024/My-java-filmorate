@@ -1,15 +1,16 @@
-package ru.yandex.practicum.filmorate.storage.film.impl;
+package ru.yandex.practicum.filmorate.repository.film.impl;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.storage.film.FilmStorage;
+import ru.yandex.practicum.filmorate.repository.film.FilmRepository;
+
 
 import java.util.*;
 
 @Slf4j
 @Component
-public class InMemoryFilmStorage implements FilmStorage {
+public class InMemoryFilmStorage implements FilmRepository {
     private final Map<Long, Film> films = new HashMap<>();
     private Long currentId = 1L;
 

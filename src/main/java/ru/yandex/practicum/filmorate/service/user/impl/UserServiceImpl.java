@@ -4,8 +4,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.repository.user.UserRepository;
 import ru.yandex.practicum.filmorate.service.user.UserService;
-import ru.yandex.practicum.filmorate.storage.user.UserStorage;
+
 
 import java.util.HashSet;
 import java.util.List;
@@ -16,10 +17,10 @@ import java.util.stream.Collectors;
 @Slf4j
 @Service
 public class UserServiceImpl implements UserService {
-    private final UserStorage userStorage;
+    private final UserRepository userStorage;
 
     @Autowired
-    public UserServiceImpl(UserStorage userStorage) {
+    public UserServiceImpl(UserRepository userStorage) {
         this.userStorage = userStorage;
     }
 

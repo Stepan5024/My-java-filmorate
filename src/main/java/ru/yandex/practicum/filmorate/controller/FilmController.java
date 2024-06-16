@@ -27,7 +27,7 @@ public class FilmController {
     @Autowired
     public FilmController(FilmService filmService) {
         this.filmService = filmService;
-        log.debug("FilmController initialized with FilmService.");
+        log.info("FilmController initialized with FilmService.");
     }
 
     @PostMapping
