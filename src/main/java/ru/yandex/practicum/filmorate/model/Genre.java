@@ -14,6 +14,5 @@ import lombok.experimental.FieldDefaults;
 public class Genre {
     Long id;
 
-    @NotBlank(message = "Name cannot be blank")
     String name;
 }

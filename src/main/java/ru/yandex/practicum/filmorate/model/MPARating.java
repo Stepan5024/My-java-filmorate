@@ -12,6 +12,8 @@ import lombok.experimental.FieldDefaults;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class MPARating {
     Long id;
-    String rating;
+    String name;
     String description;
+
+
 }

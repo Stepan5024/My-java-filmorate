@@ -55,4 +55,9 @@ public class InMemoryFilmStorage implements FilmRepository {
         return new ArrayList<>(films.values());
     }
 
+    @Override
+    public List<Film> findAllFilmsWithDetails() {
+        return List.of();
+    }
+
 }

@@ -5,10 +5,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.Size;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 import java.time.LocalDate;
@@ -37,9 +34,11 @@ public class Film {
 
     Set<Long> likes = new HashSet<>();
 
-    MPARating mpaRating;
+    MPARating mpa;
 
-    private Set<Long> genreIds = new HashSet<>();
+    @Getter
+    Set<Genre> genres  = new HashSet<>();
+
 
     public Film(String name, String description, LocalDate releaseDate, int duration) {
         this.name = name;

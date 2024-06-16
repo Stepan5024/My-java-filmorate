@@ -9,10 +9,10 @@ CREATE TABLE IF NOT EXISTS "Film" (
 );
 CREATE TABLE IF NOT EXISTS "MPARating" (
     "ID" IDENTITY PRIMARY KEY,
-    "Rating" nvarchar(10) NOT NULL UNIQUE,
+    "Name" nvarchar(10) NOT NULL UNIQUE,
     "Description" nvarchar(100) NOT NULL,
     CONSTRAINT "pk_MPARating" PRIMARY KEY ("ID"),
-    CONSTRAINT "uc_MPARating_Rating" UNIQUE ("Rating")
+    CONSTRAINT "uc_MPARating_Rating" UNIQUE ("Name")
 );
 CREATE TABLE IF NOT EXISTS "Genre" (
     "ID" IDENTITY PRIMARY KEY,

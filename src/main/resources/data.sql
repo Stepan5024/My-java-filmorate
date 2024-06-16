@@ -13,53 +13,35 @@ MERGE INTO "MPARating" AS target USING (
             'NC-17',
             'Доступ к фильму лицам до 18 лет запрещён'
         )
-) AS source ("Rating", "Description") ON target."Rating" = source."Rating"
+) AS source ("Name", "Description") ON target."Name" = source."Name"
 WHEN NOT MATCHED THEN
-INSERT ("Rating", "Description")
-VALUES (source."Rating", source."Description");
+INSERT ("Name", "Description")
+VALUES (source."Name", source."Description");
 
+-- Создаем временную таблицу для хранения временных данных
+CREATE TEMPORARY TABLE IF NOT EXISTS "temp_genre" (
+    "ID" SERIAL PRIMARY KEY,
+    "Name" VARCHAR(255) NOT NULL
+);
+-- Вставляем данные во временную таблицу
+INSERT INTO "temp_genre" ("Name")
+VALUES ('Комедия'),
+    ('Драма'),
+    ('Мультфильм'),
+    ('Триллер'),
+    ('Документальный'),
+    ('Боевик');
+-- Вставляем данные из временной таблицы в основную таблицу Genre, если их там нет
 INSERT INTO "Genre" ("Name")
-SELECT 'Комедия'
+SELECT tg."Name"
+FROM "temp_genre" tg
 WHERE NOT EXISTS (
         SELECT 1
-        FROM "Genre"
-        WHERE "Name" = 'Комедия'
+        FROM "Genre" g
+        WHERE g."Name" = tg."Name"
     );
-INSERT INTO "Genre" ("Name")
-SELECT 'Драма'
-WHERE NOT EXISTS (
-        SELECT 1
-        FROM "Genre"
-        WHERE "Name" = 'Драма'
-    );
-INSERT INTO "Genre" ("Name")
-SELECT 'Мультфильм'
-WHERE NOT EXISTS (
-        SELECT 1
-        FROM "Genre"
-        WHERE "Name" = 'Мультфильм'
-    );
-INSERT INTO "Genre" ("Name")
-SELECT 'Триллер'
-WHERE NOT EXISTS (
-        SELECT 1
-        FROM "Genre"
-        WHERE "Name" = 'Триллер'
-    );
-INSERT INTO "Genre" ("Name")
-SELECT 'Документальный'
-WHERE NOT EXISTS (
-        SELECT 1
-        FROM "Genre"
-        WHERE "Name" = 'Документальный'
-    );
-INSERT INTO "Genre" ("Name")
-SELECT 'Боевик'
-WHERE NOT EXISTS (
-        SELECT 1
-        FROM "Genre"
-        WHERE "Name" = 'Боевик'
-    );
+-- Удаляем временную таблицу
+DROP TABLE IF EXISTS "temp_genre";
 
 INSERT INTO "FriendStatus" ("ID", "Name")
 SELECT 1,

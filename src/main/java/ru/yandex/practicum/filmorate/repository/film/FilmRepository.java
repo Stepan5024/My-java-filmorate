@@ -16,4 +16,6 @@ public interface FilmRepository {
     Optional<Film> getFilmById(Long id);
 
     List<Film> getAllFilms();
+
+    List<Film> findAllFilmsWithDetails();
 }

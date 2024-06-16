@@ -16,4 +16,8 @@ public interface FilmService {
     void removeLike(Long filmId, Long userId);
 
     List<Film> getTopFilms(int limit);
+
+    Film findById(Long id);
+
+    List<Film> findAllFilmsWithDetails();
 }
