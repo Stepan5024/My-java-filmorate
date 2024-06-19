@@ -1,3 +1,6 @@
+INSERT INTO user (id, email, login, name, birthday) VALUES
+(1, 'test@example.com', 'testlogin', 'Test User', '1990-01-01');
+
 MERGE INTO "MPARating" AS target USING (
     VALUES ('G', 'Фильм подходит для всех возрастов'),
         ('PG', 'Рекомендуется присутствие родителей'),
