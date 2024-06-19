@@ -1,7 +1,6 @@
 package ru.yandex.practicum.filmorate.service.film;
 
 
-import org.junit.jupiter.api.BeforeEach;
 import ru.yandex.practicum.filmorate.service.film.impl.FilmServiceImpl;
 
 public class FilmServiceImplTest {
