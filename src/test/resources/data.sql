@@ -1,5 +1,19 @@
-INSERT INTO user (id, email, login, name, birthday) VALUES
-(1, 'test@example.com', 'testlogin', 'Test User', '1990-01-01');
+MERGE INTO "User" AS target
+USING (
+    SELECT 1 AS "ID", 'test@example.com' AS "Email", 'testlogin' AS "Login", 'Test User' AS "Name", '1990-01-01' AS "Birthday"
+) AS source
+ON (target."ID" = source."ID")
+WHEN MATCHED THEN
+    UPDATE SET
+        target."Email" = source."Email",
+        target."Login" = source."Login",
+        target."Name" = source."Name",
+        target."Birthday" = source."Birthday"
+WHEN NOT MATCHED THEN
+    INSERT ("ID", "Email", "Login", "Name", "Birthday")
+    VALUES (source."ID", source."Email", source."Login", source."Name", source."Birthday");
+
+
 
 MERGE INTO "MPARating" AS target USING (
     VALUES ('G', 'Фильм подходит для всех возрастов'),
