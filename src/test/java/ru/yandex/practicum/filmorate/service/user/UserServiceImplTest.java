@@ -4,9 +4,9 @@ import ru.yandex.practicum.filmorate.service.user.impl.UserServiceImpl;
 
 public class UserServiceImplTest {
 
-    
     private UserServiceImpl userService;
-/*
+
+    /*
     @BeforeEach
     public void setup() {
         UserRepository userStorage = new InMemoryUserStorage();
