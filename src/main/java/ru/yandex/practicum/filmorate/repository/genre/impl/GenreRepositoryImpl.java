@@ -7,9 +7,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 import ru.yandex.practicum.filmorate.model.Genre;
-import ru.yandex.practicum.filmorate.model.MPARating;
 import ru.yandex.practicum.filmorate.repository.genre.IGenreRepository;
-import ru.yandex.practicum.filmorate.repository.mpa.impl.MPARatingRepositoryImpl;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
