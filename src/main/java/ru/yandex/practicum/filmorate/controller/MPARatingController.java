@@ -30,8 +30,8 @@ public class MPARatingController {
     public ResponseEntity<List<MPARating>> getAllMPA() {
         // получить все рейтинги
         log.debug("Fetching all mpa`s.");
-        List<MPARating> MPARatings = mpaRatingService.getAllMPARatings();
-        return ResponseEntity.status(HttpStatus.OK).body(MPARatings);
+        List<MPARating> mpaRatings = mpaRatingService.getAllMPARatings();
+        return ResponseEntity.status(HttpStatus.OK).body(mpaRatings);
     }
 
     @GetMapping("/{id}")
