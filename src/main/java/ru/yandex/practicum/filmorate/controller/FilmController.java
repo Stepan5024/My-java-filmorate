@@ -10,9 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.exceptions.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Genre;
-import ru.yandex.practicum.filmorate.model.MPARating;
 import ru.yandex.practicum.filmorate.service.film.FilmService;
-
 
 import java.time.LocalDate;
 import java.util.Collections;
@@ -38,7 +36,7 @@ public class FilmController {
         // создать новый фильм
         log.info("Attempting to add a new film with title: {}", film.getName());
 
-        for(Genre genre : film.getGenres()) {
+        for (Genre genre : film.getGenres()) {
             log.info("genre film: {}", genre.getId());
         }
         if (bindingResult.hasErrors()) {
@@ -95,14 +93,6 @@ public class FilmController {
         return ResponseEntity.status(HttpStatus.OK).body(updatedFilm);
     }
 
-    /*@GetMapping
-    public ResponseEntity<List<Film>> getAllFilms() {
-        // получить все фильмы
-        log.debug("Fetching all films.");
-        List<Film> films = filmService.getAllFilms();
-        return ResponseEntity.status(HttpStatus.OK).body(films);
-    }*/
-
     private void validateReleaseDate(LocalDate releaseDate) {
         LocalDate earliestReleaseFilmDate = LocalDate.of(1895, 12, 28);
         if (releaseDate.isBefore(earliestReleaseFilmDate)) {
@@ -128,11 +118,11 @@ public class FilmController {
 
 
     @PutMapping(LIKE_PATH)
-    public ResponseEntity<Void> addLike(@PathVariable Long id, @PathVariable Long userId) throws Exception {
+    public ResponseEntity<Film> addLike(@PathVariable Long id, @PathVariable Long userId) throws Exception {
         // пользователь ставит лайк фильму
         try {
-            filmService.addLike(id, userId);
-            return ResponseEntity.ok().build();
+            Film film = filmService.addLike(id, userId);
+            return ResponseEntity.ok(film);
         } catch (NoSuchElementException e) {
             log.error("Failed to add like: {}", e.getMessage());
             throw new NoSuchElementException("Failed to add like: " + e.getMessage(), e);

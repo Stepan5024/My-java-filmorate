@@ -35,7 +35,6 @@ public class FilmDependencyFacade {
     }
 
 
-
     public void validateGenres(Set<Genre> genres) {
         for (Genre genre : genres) {
             Genre foundGenre = genreService.findById(genre.getId());

@@ -1,6 +1,6 @@
 CREATE TABLE IF NOT EXISTS "Film" (
     "ID" IDENTITY PRIMARY KEY,
-    "Name" nvarchar(255) NOT NULL UNIQUE,
+    "Name" nvarchar(255) NOT NULL,
     "Description" nvarchar(max) NOT NULL,
     "ReleaseDate" date NOT NULL,
     "Duration" int NOT NULL,
@@ -46,7 +46,7 @@ CREATE TABLE IF NOT EXISTS "UserFriend" (
     "ID" IDENTITY PRIMARY KEY,
     "UserID" int NOT NULL,
     "FriendID" int NOT NULL,
-    "Status" varchar(20) NOT NULL UNIQUE,
+    "Status" varchar(20) NOT NULL,
     CONSTRAINT "pk_UserFriend" PRIMARY KEY ("ID"),
     CONSTRAINT "fk_UserFriend_UserID" FOREIGN KEY ("UserID") REFERENCES "User" ("ID"),
     CONSTRAINT "fk_UserFriend_FriendID" FOREIGN KEY ("FriendID") REFERENCES "User" ("ID"),

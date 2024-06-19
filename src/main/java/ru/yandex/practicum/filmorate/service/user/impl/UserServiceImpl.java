@@ -5,14 +5,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.repository.user.UserRepository;
+import ru.yandex.practicum.filmorate.repository.user.impl.UserDbStorage;
 import ru.yandex.practicum.filmorate.service.user.UserService;
 
-
-import java.util.HashSet;
-import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.Set;
-import java.util.stream.Collectors;
+import java.util.*;
 
 @Slf4j
 @Service
@@ -20,7 +16,7 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userStorage;
 
     @Autowired
-    public UserServiceImpl(UserRepository userStorage) {
+    public UserServiceImpl(UserDbStorage userStorage) {
         this.userStorage = userStorage;
     }
 
@@ -51,26 +47,28 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Set<User> getAllFriends(Long id) {
-
         User user = getUserById(id, "Friend");
 
-        Set<Long> friendIds = user.getFriends();
-
-        return friendIds.stream()
-                .map(friendId -> userStorage.getUserById(friendId)
-                        .orElseThrow(() -> new NoSuchElementException("Friend not found with ID: " + friendId)))
-                .collect(Collectors.toSet());
+        // Преобразуем идентификаторы друзей в объекты User
+        return userStorage.getUserFriends(user.getId());
 
     }
 
     @Override
-    public void addFriend(Long userId, Long friendId) {
+    public User addFriend(Long userId, Long friendId) {
+        log.info("userId = {} and friendId = {}", userId, friendId);
+
+        // Получаем пользователя и его друга
         User user = getUserById(userId, "User");
         User friend = getUserById(friendId, "Friend");
-        user.getFriends().add(friendId);
-        friend.getFriends().add(userId);
-        userStorage.updateUser(user.getId(), user);
-        userStorage.updateUser(friend.getId(), friend);
+
+        // Добавляем друга в список друзей пользователя
+        user.getFriends().add(friend);
+        //friend.getFriends().add(user);
+
+        // Обновляем пользователя и его друга в базе данных
+        return userStorage.updateUser(user.getId(), user);
+        //userStorage.updateUser(friend.getId(), friend);
     }
 
     @Override
@@ -87,12 +85,11 @@ public class UserServiceImpl implements UserService {
     public List<User> getCommonFriends(Long userId, Long friendId) {
         User user = getUserById(userId, "User");
         User friend = getUserById(friendId, "Friend");
-        Set<Long> mutualFriendIds = new HashSet<>(user.getFriends());
+        Set<User> mutualFriends = new HashSet<>(user.getFriends());
 
-        mutualFriendIds.retainAll(friend.getFriends());
-        return mutualFriendIds.stream()
-                .map(id -> userStorage.getUserById(id).orElse(null))
-                .collect(Collectors.toList());
+        mutualFriends.retainAll(friend.getFriends());
+
+        return new ArrayList<>(mutualFriends);
     }
 
     @Override

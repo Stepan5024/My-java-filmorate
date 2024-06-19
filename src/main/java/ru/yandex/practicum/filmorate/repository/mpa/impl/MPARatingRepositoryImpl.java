@@ -37,11 +37,17 @@ public class MPARatingRepositoryImpl implements IMPARatingRepository {
     }
 
     public Optional<MPARating> findById(Long id) {
-        String sql = "SELECT * FROM \"MPARating\" WHERE id = ?";
+        String sql = "SELECT * FROM \"MPARating\" WHERE \"ID\" = ?";
         try {
-            MPARating mpaRating = jdbcTemplate.queryForObject(sql, new MPARatingRowMapper(), id);
-            log.info("Found MPARating with ID {}: {}", id, mpaRating);
-            return Optional.ofNullable(mpaRating);
+            List<MPARating> results = jdbcTemplate.query(sql, new MPARatingRowMapper(), id);
+            if (results.isEmpty()) {
+                log.info("MPARating with ID {} not found", id);
+                return Optional.empty();
+            } else {
+                MPARating mpaRating = results.getFirst();
+                log.info("Found MPARating with ID {}: {}", id, mpaRating);
+                return Optional.of(mpaRating);
+            }
         } catch (Exception e) {
             log.error("Failed to find MPARating with ID {}", id, e);
             return Optional.empty();

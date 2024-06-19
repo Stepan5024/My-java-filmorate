@@ -50,26 +50,28 @@ public class FilmServiceImpl implements FilmService {
 
     @Override
     public Film updateFilm(Long id, Film film) {
-        Film newFilm = filmStorage.updateFilm(id, film);
+        Film updatedFilm = filmStorage.updateFilm(id, film);
 
-        if (newFilm == null) {
-            return null;
-        } else {
-            return film;
+        if (updatedFilm == null) {
+            throw new NoSuchElementException("Failed to find film with ID: " + id);
         }
+
+        return updatedFilm;
     }
 
     @Override
     public List<Film> getAllFilms() {
-        return filmStorage.getAllFilms();
+        return filmStorage.findAllFilmsWithDetails();
     }
 
     @Override
-    public void addLike(Long filmId, Long userId) {
+    public Film addLike(Long filmId, Long userId) {
         Film film = findById(filmId);
         User user = userService.getUserById(userId);
-        film.getLikes().add(user.getId());
-        filmStorage.updateFilm(film.getId(), film);
+
+        film.getLikes().add(user);
+        return filmStorage.updateFilm(film.getId(), film);
+
     }
 
     @Override
@@ -77,13 +79,13 @@ public class FilmServiceImpl implements FilmService {
         Film film = findById(filmId);
         User user = userService.getUserById(userId);
 
-        film.getLikes().remove(user.getId());
+        film.getLikes().remove(user);
         filmStorage.updateFilm(film.getId(), film);
     }
 
     @Override
     public List<Film> getTopFilms(int limit) {
-        return filmStorage.getAllFilms().stream()
+        return filmStorage.findAllFilmsWithDetails().stream()
                 .sorted(Comparator.comparingInt(f -> -f.getLikes().size()))
                 .limit(limit)
                 .collect(Collectors.toList());
@@ -91,15 +93,8 @@ public class FilmServiceImpl implements FilmService {
 
     @Override
     public Film findById(Long id) {
-        Film film = filmStorage.getFilmById(id)
+        return filmStorage.getFilmById(id)
                 .orElseThrow(() -> new NoSuchElementException("Film not found with ID: " + id));
-
-        // Проверка на пустоту или наличие id = 0 в поле Genres
-        if (film.getGenres() == null || film.getGenres().isEmpty() || film.getGenres().stream().anyMatch(genre -> genre.getId() == 0)) {
-            //film.setGenres(null);
-        }
-
-        return film;
     }
 
     @Override

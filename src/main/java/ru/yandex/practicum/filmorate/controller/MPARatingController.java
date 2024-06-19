@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.MPARating;
 import ru.yandex.practicum.filmorate.service.mpa.IMPARatingService;
 
@@ -38,11 +37,11 @@ public class MPARatingController {
     @GetMapping("/{id}")
     public ResponseEntity<Object> getMPARatingById(@PathVariable("id") Long id) {
         MPARating mpaRating = mpaRatingService.findById(id);
-        /*if (mpaRating != null) {
-            return ResponseEntity.ok(mpaRating);
+        if (mpaRating != null) {
+            return ResponseEntity.status(HttpStatus.OK).body(mpaRating);
         } else {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("MPARating с указанным ID не найден");
-        }*/
-        return ResponseEntity.status(HttpStatus.OK).body(mpaRating);
+        }
+
     }
 }

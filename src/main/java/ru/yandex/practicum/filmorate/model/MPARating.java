@@ -14,6 +14,4 @@ public class MPARating {
     Long id;
     String name;
     String description;
-
-
 }

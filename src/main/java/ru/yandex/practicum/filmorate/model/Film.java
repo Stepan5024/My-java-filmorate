@@ -1,6 +1,5 @@
 package ru.yandex.practicum.filmorate.model;
 
-import io.micrometer.common.lang.Nullable;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
@@ -32,12 +31,12 @@ public class Film {
     @Positive(message = "Duration must be greater than zero")
     int duration;
 
-    Set<Long> likes = new HashSet<>();
+    Set<User> likes = new HashSet<>();
 
     MPARating mpa;
 
     @Getter
-    Set<Genre> genres  = new HashSet<>();
+    Set<Genre> genres = new HashSet<>();
 
 
     public Film(String name, String description, LocalDate releaseDate, int duration) {

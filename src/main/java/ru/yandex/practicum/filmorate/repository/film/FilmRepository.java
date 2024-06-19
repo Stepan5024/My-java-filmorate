@@ -7,6 +7,8 @@ import java.util.Optional;
 
 public interface FilmRepository {
 
+    void addLike(Long filmId, Long userId);
+
     Film addFilm(Film film);
 
     boolean deleteFilm(Long id);
@@ -15,7 +17,6 @@ public interface FilmRepository {
 
     Optional<Film> getFilmById(Long id);
 
-    List<Film> getAllFilms();
 
     List<Film> findAllFilmsWithDetails();
 }

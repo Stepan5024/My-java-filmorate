@@ -9,6 +9,7 @@ import org.springframework.stereotype.Repository;
 import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.model.MPARating;
 import ru.yandex.practicum.filmorate.repository.genre.IGenreRepository;
+import ru.yandex.practicum.filmorate.repository.mpa.impl.MPARatingRepositoryImpl;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -40,8 +41,18 @@ public class GenreRepositoryImpl implements IGenreRepository {
     public Optional<Genre> findById(Long id) {
         String sql = "SELECT * FROM \"Genre\" WHERE \"ID\" = ?";
         try {
-            return Optional.ofNullable(jdbcTemplate.queryForObject(sql, new GenreRowMapper(), id));
+            List<Genre> results = jdbcTemplate.query(sql, new GenreRowMapper(), id);
+            if (results.isEmpty()) {
+                log.info("genre with ID {} not found", id);
+                return Optional.empty();
+            } else {
+                Genre genre = results.getFirst();
+                log.info("Found genre with ID {}: {}", id, genre);
+                return Optional.of(genre);
+            }
+
         } catch (Exception e) {
+            log.error("Failed to find genre with ID {}", id, e);
             return Optional.empty();
         }
     }

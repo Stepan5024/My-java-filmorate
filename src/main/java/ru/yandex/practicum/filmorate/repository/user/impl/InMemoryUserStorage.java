@@ -54,4 +54,27 @@ public class InMemoryUserStorage implements UserRepository {
     public List<User> getAllUsers() {
         return new ArrayList<>(users.values());
     }
+
+    @Override
+    public Integer getFriendStatusIdByName(String statusName) {
+        // Since it's in-memory, we can return a hardcoded value or create a map of statuses if needed.
+        // Assuming "PENDING" status has ID 1 for this example.
+        Map<String, Integer> statusMap = Map.of(
+                "Неподтверждённая", 1,
+                "Подтверждённая", 2
+        );
+        return statusMap.getOrDefault(statusName, 0);
+    }
+
+    @Override
+    public Set<User> getAllFriends(Long userId) {
+        return getUserById(userId)
+                .map(User::getFriends)
+                .orElse(Collections.emptySet());
+    }
+
+    @Override
+    public Set<User> getUserFriends(Long userId) {
+        return getAllFriends(userId);
+    }
 }

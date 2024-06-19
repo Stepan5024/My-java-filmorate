@@ -32,7 +32,7 @@ public class User {
 
     LocalDate birthday;
 
-    Set<Long> friends = new HashSet<>();
+    Set<User> friends = new HashSet<>();
 
     Set<Long> likedFilms = new HashSet<>();
 

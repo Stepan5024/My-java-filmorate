@@ -10,10 +10,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import ru.yandex.practicum.filmorate.model.Genre;
-import ru.yandex.practicum.filmorate.model.MPARating;
 import ru.yandex.practicum.filmorate.service.genre.IGenreService;
-import ru.yandex.practicum.filmorate.service.genre.impl.GenreServiceImpl;
-import ru.yandex.practicum.filmorate.service.mpa.IMPARatingService;
 
 import java.util.List;
 
@@ -40,6 +37,11 @@ public class GenreController {
     @GetMapping("/{id}")
     public ResponseEntity<Object> getGenreById(@PathVariable("id") Long id) {
         Genre genre = genreService.findById(id);
-        return ResponseEntity.status(HttpStatus.OK).body(genre);
+        if (genre != null) {
+            return ResponseEntity.status(HttpStatus.OK).body(genre);
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Genre с указанным ID не найден");
+        }
+
     }
 }

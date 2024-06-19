@@ -130,10 +130,10 @@ public class UserController {
     }
 
     @PutMapping(FRIENDS_PATH)
-    public ResponseEntity<Void> addFriend(@PathVariable Long id, @PathVariable Long friendId) {
+    public ResponseEntity<User> addFriend(@PathVariable Long id, @PathVariable Long friendId) {
         // добавление в друзья
-        userService.addFriend(id, friendId);
-        return ResponseEntity.ok().build();
+        User user = userService.addFriend(id, friendId);
+        return ResponseEntity.ok(user);
     }
 
     @DeleteMapping(FRIENDS_PATH)
