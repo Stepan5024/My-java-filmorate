@@ -33,7 +33,6 @@ CREATE TABLE IF NOT EXISTS "User" (
     "Name" varchar(255) NOT NULL,
     "Birthday" date NOT NULL,
     CONSTRAINT "pk_User" PRIMARY KEY ("ID"),
-    CONSTRAINT "uc_User_Email" UNIQUE ("Email"),
     CONSTRAINT "uc_User_Login" UNIQUE ("Login")
 );
 CREATE TABLE IF NOT EXISTS "UserFilmLike" (
