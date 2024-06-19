@@ -1,16 +1,6 @@
 package ru.yandex.practicum.filmorate.service.user;
 
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import ru.yandex.practicum.filmorate.model.User;
-import ru.yandex.practicum.filmorate.repository.user.UserRepository;
 import ru.yandex.practicum.filmorate.service.user.impl.UserServiceImpl;
-
-
-import static org.junit.jupiter.api.Assertions.*;
-
-import java.time.LocalDate;
-import java.util.List;
 
 public class UserServiceImplTest {
 
