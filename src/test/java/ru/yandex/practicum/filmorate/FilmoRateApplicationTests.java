@@ -33,7 +33,7 @@ class FilmoRateApplicationTests {
         user.setLogin("testlogin" + UUID.randomUUID());
         user.setName("Test User" + UUID.randomUUID());
         user.setBirthday(LocalDate.of(1990, 1, 1));
-        
+
         testUser = userStorage.addUser(user);
     }
 
