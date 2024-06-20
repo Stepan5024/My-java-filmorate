@@ -42,6 +42,5 @@ public class MPARatingController {
         } else {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("MPARating с указанным ID не найден");
         }
-
     }
 }

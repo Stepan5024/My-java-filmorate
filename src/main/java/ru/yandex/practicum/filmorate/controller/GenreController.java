@@ -42,6 +42,5 @@ public class GenreController {
         } else {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Genre с указанным ID не найден");
         }
-
     }
 }

@@ -109,7 +109,7 @@ public class FilmController {
         return ResponseEntity.status(HttpStatus.OK).body(film);
     }
 
-    @GetMapping()
+    @GetMapping
     public ResponseEntity<Object> getAllFilms() {
         log.info("Get All Films");
         List<Film> films = filmService.findAllFilmsWithDetails();
@@ -153,5 +153,4 @@ public class FilmController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
-
 }
