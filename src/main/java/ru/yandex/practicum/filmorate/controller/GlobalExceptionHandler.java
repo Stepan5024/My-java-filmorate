@@ -27,7 +27,6 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         return handleExceptionInternal(ex, body, null, HttpStatus.BAD_REQUEST, request);
     }
 
-
     @ExceptionHandler(RuntimeException.class)
     public ResponseEntity<Object> handleAllExceptions(Exception ex, WebRequest request) {
         Map<String, Object> body = Collections.singletonMap("error", "An unexpected error occurred: " + ex.getMessage());

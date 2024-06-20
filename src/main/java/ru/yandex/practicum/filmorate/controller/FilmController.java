@@ -9,8 +9,8 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.exceptions.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.service.film.FilmService;
-
 
 import java.time.LocalDate;
 import java.util.Collections;
@@ -27,20 +27,25 @@ public class FilmController {
     @Autowired
     public FilmController(FilmService filmService) {
         this.filmService = filmService;
-        log.debug("FilmController initialized with FilmService.");
+        log.info("FilmController initialized with FilmService.");
     }
 
     @PostMapping
     public ResponseEntity<Object> addFilm(@Valid @RequestBody Film film, BindingResult bindingResult) {
+
         // создать новый фильм
         log.info("Attempting to add a new film with title: {}", film.getName());
 
+        for (Genre genre : film.getGenres()) {
+            log.info("genre film: {}", genre.getId());
+        }
         if (bindingResult.hasErrors()) {
             log.warn("Validation addFilm errors occurred: {}", bindingResult.getAllErrors());
             return ResponseEntity.badRequest().body(Collections.singletonMap("error", "Validation error: " + bindingResult.getAllErrors()));
         }
 
         validateReleaseDate(film.getReleaseDate());
+        log.info("Try to put in service: {}", film.getName());
         Film savedFilm = filmService.addFilm(film);
         log.info("Film added successfully with ID: {}", savedFilm.getId());
         return ResponseEntity.status(HttpStatus.CREATED).body(savedFilm);
@@ -88,14 +93,6 @@ public class FilmController {
         return ResponseEntity.status(HttpStatus.OK).body(updatedFilm);
     }
 
-    @GetMapping
-    public ResponseEntity<List<Film>> getAllFilms() {
-        // получить все фильмы
-        log.debug("Fetching all films.");
-        List<Film> films = filmService.getAllFilms();
-        return ResponseEntity.status(HttpStatus.OK).body(films);
-    }
-
     private void validateReleaseDate(LocalDate releaseDate) {
         LocalDate earliestReleaseFilmDate = LocalDate.of(1895, 12, 28);
         if (releaseDate.isBefore(earliestReleaseFilmDate)) {
@@ -105,12 +102,27 @@ public class FilmController {
         }
     }
 
+    @GetMapping("/{id}")
+    public ResponseEntity<Object> getFilmById(@PathVariable("id") Long id) {
+        log.info("Get Film with ID: {}", id);
+        Film film = filmService.findById(id);
+        return ResponseEntity.status(HttpStatus.OK).body(film);
+    }
+
+    @GetMapping
+    public ResponseEntity<Object> getAllFilms() {
+        log.info("Get All Films");
+        List<Film> films = filmService.findAllFilmsWithDetails();
+        return ResponseEntity.status(HttpStatus.OK).body(films);
+    }
+
+
     @PutMapping(LIKE_PATH)
-    public ResponseEntity<Void> addLike(@PathVariable Long id, @PathVariable Long userId) throws Exception {
+    public ResponseEntity<Film> addLike(@PathVariable Long id, @PathVariable Long userId) throws Exception {
         // пользователь ставит лайк фильму
         try {
-            filmService.addLike(id, userId);
-            return ResponseEntity.ok().build();
+            Film film = filmService.addLike(id, userId);
+            return ResponseEntity.ok(film);
         } catch (NoSuchElementException e) {
             log.error("Failed to add like: {}", e.getMessage());
             throw new NoSuchElementException("Failed to add like: " + e.getMessage(), e);
@@ -141,5 +153,4 @@ public class FilmController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
-
 }

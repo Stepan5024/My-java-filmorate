@@ -18,7 +18,7 @@ public interface UserService {
 
     Set<User> getAllFriends(Long id);
 
-    void addFriend(Long userId, Long friendId);
+    User addFriend(Long userId, Long friendId);
 
     void removeFriend(Long userId, Long friendId);
 

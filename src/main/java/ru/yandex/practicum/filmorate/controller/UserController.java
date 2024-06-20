@@ -43,13 +43,13 @@ public class UserController {
             setDisplayName(user);
         } catch (ValidationException e) {
             log.error("Error creating user: ", e);
-
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Collections.singletonMap("error",
                     "Error creating user due to invalid input: " + e.getMessage()));
         }
 
         User createdUser = userService.createUser(user);
         log.info("User created successfully with ID: {}", createdUser.getId());
+
         return ResponseEntity.status(HttpStatus.CREATED).body(createdUser);
     }
 
@@ -130,10 +130,10 @@ public class UserController {
     }
 
     @PutMapping(FRIENDS_PATH)
-    public ResponseEntity<Void> addFriend(@PathVariable Long id, @PathVariable Long friendId) {
+    public ResponseEntity<User> addFriend(@PathVariable Long id, @PathVariable Long friendId) {
         // добавление в друзья
-        userService.addFriend(id, friendId);
-        return ResponseEntity.ok().build();
+        User user = userService.addFriend(id, friendId);
+        return ResponseEntity.ok(user);
     }
 
     @DeleteMapping(FRIENDS_PATH)
