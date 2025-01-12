@@ -1,17 +1,39 @@
-package ru.yandex.practicum.filmorate.storage.film.impl;
+package ru.yandex.practicum.filmorate.repository.film.impl;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.storage.film.FilmStorage;
+import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.repository.film.FilmRepository;
+import ru.yandex.practicum.filmorate.service.user.UserService;
+
 
 import java.util.*;
 
 @Slf4j
 @Component
-public class InMemoryFilmStorage implements FilmStorage {
+public class InMemoryFilmStorage implements FilmRepository {
     private final Map<Long, Film> films = new HashMap<>();
     private Long currentId = 1L;
+    private UserService userService;
+
+    public InMemoryFilmStorage(UserService userService) {
+        this.userService = userService;
+    }
+
+    @Override
+    public void addLike(Long filmId, Long userId) {
+        Film film = films.get(filmId);
+        if (film != null) {
+            User user = userService.getUserById(userId);
+            film.getLikes().add(user);
+            log.info("User with ID: {} liked film with ID: {}", userId, filmId);
+        } else {
+            log.warn("Attempted to like non-existent film with ID: {}", filmId);
+            throw new NoSuchElementException("Film not found with ID: " + filmId);
+        }
+    }
+
 
     @Override
     public Film addFilm(Film film) {
@@ -49,9 +71,8 @@ public class InMemoryFilmStorage implements FilmStorage {
     }
 
     @Override
-    public List<Film> getAllFilms() {
-        log.debug("Fetching all films.");
-        return new ArrayList<>(films.values());
+    public List<Film> findAllFilmsWithDetails() {
+        return List.of();
     }
 
 }
